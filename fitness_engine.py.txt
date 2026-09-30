@@ -1,0 +1,93 @@
+# FitBuddy AI Engine - Generates personalized plan
+import random
+
+def calculate_bmi(weight, height_cm):
+    height_m = height_cm / 100
+    bmi = weight / (height_m * height_m)
+    return round(bmi, 1)
+
+def get_bmi_status(bmi):
+    if bmi < 18.5:
+        return "Underweight"
+    elif bmi < 25:
+        return "Normal"
+    elif bmi < 30:
+        return "Overweight"
+    else:
+        return "Obese"
+
+def generate_ai_plan(data):
+    age = int(data['age'])
+    weight = float(data['weight'])
+    height = float(data['height'])
+    gender = data['gender']
+    goal = data['goal']  # weight_loss, muscle_gain, fitness
+    level = data['level'] # beginner, intermediate, advanced
+    diet_type = data['diet'] # veg, non_veg, vegan
+
+    bmi = calculate_bmi(weight, height)
+    bmi_status = get_bmi_status(bmi)
+    
+    # Calorie calculation (Mifflin-St Jeor)
+    if gender == 'male':
+        bmr = 10*weight + 6.25*height - 5*age + 5
+    else:
+        bmr = 10*weight + 6.25*height - 5*age - 161
+    
+    if goal == 'weight_loss':
+        daily_calories = int(bmr * 1.3 - 400)
+    elif goal == 'muscle_gain':
+        daily_calories = int(bmr * 1.5 + 300)
+    else:
+        daily_calories = int(bmr * 1.4)
+
+    # Workout Database
+    workouts = {
+        'weight_loss': {
+            'beginner': ['15 min Brisk Walk', '20 Bodyweight Squats', '30 sec Plank x 3', '10 Pushups (knee)', 'Jumping Jacks 2 mins'],
+            'advanced': ['HIIT 20 mins', 'Burpees 3x15', 'Mountain Climbers 3x30 sec', 'Running 3km', 'Skipping 500']
+        },
+        'muscle_gain': {
+            'beginner': ['Pushups 3x12', 'Squats 3x15', 'Dumbbell Rows 3x10', 'Lunges 3x12', 'Plank 60 sec'],
+            'advanced': ['Bench Press 4x8', 'Deadlift 4x6', 'Pull-ups 4x8', 'Shoulder Press 3x10', 'Barbell Squat 4x8']
+        },
+        'fitness': {
+            'beginner': ['Yoga 20 mins', 'Walking 30 mins', 'Full Body Stretch', 'Surya Namaskar 5 rounds', 'Meditation 10 mins'],
+            'advanced': ['CrossFit WOD', 'Cycling 10km', 'Swimming 30 mins', 'Functional Training', 'Core Circuit']
+        }
+    }
+
+    selected_workout = workouts.get(goal, workouts['fitness']).get(level, workouts['fitness']['beginner'])
+
+    # Diet Database
+    diet_plans = {
+        'veg': {
+            'breakfast': 'Oats + Peanut Butter + Banana + 1 cup milk',
+            'lunch': '2 Chapati + Dal + Curd + Brown Rice + Salad',
+            'snack': 'Roasted Peanuts / Fruits',
+            'dinner': '2 Chapati + Vegetable Curry + Paneer 100g'
+        },
+        'non_veg': {
+            'breakfast': '3 Egg Whites + 1 Whole Egg + 2 Brown Bread + Milk',
+            'lunch': 'Chicken Breast 150g + Rice + Salad',
+            'snack': 'Protein Shake / Boiled Eggs',
+            'dinner': 'Grilled Chicken / Fish + Veggies'
+        },
+        'vegan': {
+            'breakfast': 'Soy Milk + Oats + Almonds + Banana',
+            'lunch': 'Quinoa + Chickpeas Curry + Salad',
+            'snack': 'Hummus + Fruits',
+            'dinner': 'Tofu 150g + Brown Rice + Veggies'
+        }
+    }
+
+    return {
+        'bmi': bmi,
+        'bmi_status': bmi_status,
+        'bmr': int(bmr),
+        'daily_calories': daily_calories,
+        'workout_plan': selected_workout,
+        'diet_plan': diet_plans.get(diet_type, diet_plans['veg']),
+        'water_intake': f"{round(weight * 0.033, 1)} Liters per day",
+        'tip': f"Your goal is {goal}. With {bmi_status} BMI, focus on consistency for 30 days!"
+    }

@@ -1,0 +1,39 @@
+async function generatePlan() {
+    const data = {
+        age: document.getElementById('age').value,
+        gender: document.getElementById('gender').value,
+        weight: document.getElementById('weight').value,
+        height: document.getElementById('height').value,
+        goal: document.getElementById('goal').value,
+        level: document.getElementById('level').value,
+        diet: document.getElementById('diet').value
+    };
+
+    if(!data.age || !data.weight || !data.height) { alert('Fill all details ma!'); return; }
+
+    document.getElementById('result').innerHTML = 'Generating your AI plan... ⏳';
+    document.getElementById('result').classList.remove('hidden');
+
+    const res = await fetch('/generate', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
+    });
+    const json = await res.json();
+    
+    if(json.success) {
+        const p = json.plan;
+        document.getElementById('result').innerHTML = `
+            <h2>🔥 Your AI Plan Ready!</h2>
+            <p><b>BMI:</b> ${p.bmi} (${p.bmi_status}) | <b>BMR:</b> ${p.bmr} kcal | <b>Daily Target:</b> ${p.daily_calories} kcal</p>
+            <p><b>Water:</b> ${p.water_intake}</p>
+            <h3>🏋️ Workout (for ${data.level})</h3>
+            <ul>${p.workout_plan.map(w => `<li>${w}</li>`).join('')}</ul>
+            <h3>🥗 Diet Plan (${data.diet})</h3>
+            <p><b>Breakfast:</b> ${p.diet_plan.breakfast}<br><b>Lunch:</b> ${p.diet_plan.lunch}<br><b>Snack:</b> ${p.diet_plan.snack}<br><b>Dinner:</b> ${p.diet_plan.dinner}</p>
+            <p style="background:#334155;padding:10px;border-radius:8px">💡 ${p.tip}</p>
+        `;
+    } else {
+        document.getElementById('result').innerHTML = 'Error: ' + json.error;
+    }
+}

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FitBuddy - AI Fitness Planner</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="container">
+    <h1>💪 FitBuddy</h1>
+    <p>AI-Powered Fitness Plan Generator</p>
+    
+    <div class="form-card">
+        <div class="grid">
+            <input type="number" id="age" placeholder="Age (e.g. 21)">
+            <select id="gender"><option value="male">Male</option><option value="female">Female</option></select>
+            <input type="number" id="weight" placeholder="Weight kg (e.g. 65)">
+            <input type="number" id="height" placeholder="Height cm (e.g. 170)">
+            <select id="goal">
+                <option value="weight_loss">Weight Loss</option>
+                <option value="muscle_gain">Muscle Gain</option>
+                <option value="fitness">General Fitness</option>
+            </select>
+            <select id="level">
+                <option value="beginner">Beginner</option>
+                <option value="intermediate">Intermediate</option>
+                <option value="advanced">Advanced</option>
+            </select>
+            <select id="diet">
+                <option value="veg">Veg</option>
+                <option value="non_veg">Non-Veg</option>
+                <option value="vegan">Vegan</option>
+            </select>
+        </div>
+        <button onclick="generatePlan()">Generate My AI Plan 🚀</button>
+    </div>
+
+    <div id="result" class="result-card hidden"></div>
+</div>
+<script src="/static/script.js"></script>
+</body>
+</html>
